@@ -375,7 +375,7 @@ impl StateHash {
 
     /// Parse the 68-character hex form.
     pub fn from_hex(text: &str) -> Option<Self> {
-        hex::decode(text).ok().and_then(|b| Self::from_bytes(&b))
+        hex::decode(text).ok().and_then(|b| Self::from_bytes(&b[..]))
     }
 }
 
@@ -546,4 +546,4 @@ mod tests {
         assert_eq!(next.prev_hash, Some(genesis.state_hash));
         assert_ne!(next.state_hash, genesis.state_hash);
     }
-}
+    }
