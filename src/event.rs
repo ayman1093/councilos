@@ -5,19 +5,25 @@
 //! "لا وقت داخل الحالة القابلة للهاش"), §4-أ.
 //!
 //! Invariants:
-//! - `sequence` is a dense `u64` assigned by the runtime, never a UUID. Replay
-//!   order is the sequence order.
-//! - `recorded_at_unix_ms` is **metadata only**: it is excluded from
-//!   [`Event::to_canonical`] and therefore from every hash. Two events that differ
-//!   only in timestamp hash identically — this is what makes replay possible
-//!   without the model.
-//! - A handler crash is an ordinary outcome ([`HandlerOutcome::Crashed`]), not an
-//!   error path. The log must be able to represent every way execution ends.
-//! - `evidence_ref` is a hash produced by the **runtime**; the agent never signs or
-//!   hashes its own evidence.
-//! - `policy_set_hash` pins which policy set was in force when the event was
-//!   recorded so an auditor can tell "allowed under policy X" from "allowed under
-//!   policy Y".
+//!
+//! (1) `sequence` is a dense `u64` assigned by the runtime, never a UUID.
+//! Replay order is the sequence order.
+//!
+//! (2) `recorded_at_unix_ms` is **metadata only**: it is excluded from
+//! [`Event::to_canonical`] and therefore from every hash. Two events that
+//! differ only in timestamp hash identically — this is what makes replay
+//! possible without the model.
+//!
+//! (3) A handler crash is an ordinary outcome
+//! ([`HandlerOutcome::Crashed`]), not an error path. The log must be able
+//! to represent every way execution ends.
+//!
+//! (4) `evidence_ref` is a hash produced by the **runtime**; the agent
+//! never signs or hashes its own evidence.
+//!
+//! (5) `policy_set_hash` pins which policy set was in force when the event
+//! was recorded so an auditor can tell "allowed under policy X" from
+//! "allowed under policy Y".
 
 use std::collections::BTreeMap;
 
