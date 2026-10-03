@@ -1,37 +1,42 @@
+
 //! Instruction: the unit of governed execution.
 //!
-//! Traceability:
-//!   - handover doc §1 (project), §2 ("التسلسل: sequence لا UUID"،
-//!     "الحوكمة عند حدود الثقة الأربعة"), §4-ب (M0 scope)
-//!   - ADR-0001 (canonical serialization, schema 0; hash layout)
-//!   - RFC-001 §2 (instruction contract)
-//!   - Milestone: M0 (silent skeleton) — data contract + hashing only
-//!   - Test matrix: T-M0-INS-01 (wire round-trip), T-M0-INS-02 (wire
-//!     stability), T-M0-INS-03 (canonical form frozen), T-M0-INS-04 (hash)
-//!   - Independent review: v0/Claude fresh-session review (fixed the
-//!     `serde_json::Error: PartialEq` test bug; suggested NOP constants)
+//! Traceability: handover doc §1 (project), §2 ("التسلسل: sequence لا UUID",
+//! "الحوكمة عند حدود الثقة الأربعة"), §4-ب (M0 scope)
+//! ADR-0001 (canonical serialization, schema 0; hash layout)
+//! RFC-001 §2 (instruction contract)
+//! Milestone: M0 (silent skeleton) — data contract + hashing only
+//! Test matrix: T-M0-INS-01 (wire round-trip), T-M0-INS-02 (wire
+//! stability), T-M0-INS-03 (canonical form frozen), T-M0-INS-04 (hash)
+//! Independent review: v0/Claude fresh-session review (fixed the
+//! `serde_json::Error: PartialEq` test bug; suggested NOP constants)
 //!
 //! Invariants (enforced here, relied on by `event`, `state`, `m0_golden`):
-//!   1. An instruction carries **intent only**: kind + capability + args.
-//!     No timestamps, no random ids, no host data. Identity and time live
-//!     on the enclosing `Event`.
-//!   2. The wire format is a contract. `kind`, `capability` and `args` keys
-//!     are frozen at first release: never renamed, never removed. Adding a
-//!     field is a minor change; changing an existing one is a SCHEMA VERSION
-//!     bump (ADR-0001 §Versioning).
-//!   3. The canonical form (`to_canonical`) is the ONLY input to hashing —
-//!     never serde's struct-field ordering. The canonical JSON for `Nop` is
-//!     pinned byte-exact by `tests/m0_golden.rs`:
-//!       {"args":{},"capability":"kernel.nop","kind":"nop"}
-//!   4. `args` is a `CanonicalValue::Map` — closed universe (no floats, no
-//!     random-iteration collections), so the whole instruction is hashable
-//!     by construction. Non-map args are rejected loudly, never coerced.
-//!   5. `Nop` is `is_pure() == true`: it can never mutate governed state.
-//!   6. DESIGN DECISION (M0): `kind: String` is open — the wire accepts any
-//!     kind, `is_pure()` returns `false` for anything but `NOP_KIND`. M1's
-//!     capability gate closes this: unknown kinds are rejected before
-//!     execution. Recorded here so it is a decision, not an accident.
-
+//!
+//! (1) An instruction carries **intent only**: kind + capability + args.
+//! No timestamps, no random ids, no host data. Identity and time live
+//! on the enclosing `Event`.
+//!
+//! (2) The wire format is a contract. `kind`, `capability` and `args` keys
+//! are frozen at first release: never renamed, never removed. Adding a
+//! field is a minor change; changing an existing one is a SCHEMA VERSION
+//! bump (ADR-0001 §Versioning).
+//!
+//! (3) The canonical form (`to_canonical`) is the ONLY input to hashing —
+//! never serde's struct-field ordering. The canonical JSON for `Nop` is
+//! pinned byte-exact by `tests/m0_golden.rs`:
+//! `{"args":{},"capability":"kernel.nop","kind":"nop"}`
+//!
+//! (4) `args` is a `CanonicalValue::Map` — closed universe (no floats, no
+//! random-iteration collections), so the whole instruction is hashable
+//! by construction. Non-map args are rejected loudly, never coerced.
+//!
+//! (5) `Nop` is `is_pure() == true`: it can never mutate governed state.
+//!
+//! (6) DESIGN DECISION (M0): `kind: String` is open — the wire accepts any
+//! kind, `is_pure()` returns `false` for anything but `NOP_KIND`. M1's
+//! capability gate closes this: unknown kinds are rejected before
+//! execution. Recorded here so it is a decision, not an accident.
 use std::collections::BTreeMap;
 use std::fmt;
 
