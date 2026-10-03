@@ -1,0 +1,13 @@
+# Rust build artifacts
+councilos/target/
+target/
+
+# Editor / OS noise
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Environment / secrets — never commit
+.env
+.env.*
