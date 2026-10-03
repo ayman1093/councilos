@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  check:
+    name: build / clippy / test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --all-targets --locked
+
+      - name: Clippy (determinism guardrails live in clippy.toml)
+        run: cargo clippy --all-targets --locked -- -D warnings
+
+      - name: Test
+        run: cargo test --all-targets --locked
+
+  # Replay determinism must hold ACROSS processes, not just within one.
+  # Within a single process HashMap seeds are fixed and hide bugs.
+  # This job runs the golden tests twice in separate processes and diffs.
+  cross-process-golden:
+    name: golden hashes stable across processes
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Run golden test twice, compare
+        run: |
+          cargo test --test m0_golden -- --nocapture 2>&1 | grep '^GOLDEN' | sort > run1.txt
+          cargo test --test m0_golden -- --nocapture 2>&1 | grep '^GOLDEN' | sort > run2.txt
+          test -s run1.txt
+          diff run1.txt run2.txt
