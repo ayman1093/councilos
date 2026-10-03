@@ -1,0 +1,22 @@
+# CouncilOS kernel — clippy configuration
+#
+# Traceability: ADR-0001 (determinism rules).
+# Invariant: nothing that can reach a hash may have iteration order or
+# representation that varies between processes, platforms or runs.
+#
+# HashMap/HashSet use a randomly seeded hasher -> iteration order differs per
+# process. BTreeMap/BTreeSet are the only allowed collections in hashable state.
+# Floats are banned separately via `#![deny(clippy::float_arithmetic)]` in
+# src/lib.rs and by the CanonicalValue type having no float variant.
+
+disallowed-types = [
+  { path = "std::collections::HashMap", reason = "non-deterministic iteration order; use std::collections::BTreeMap (ADR-0001)" },
+  { path = "std::collections::HashSet", reason = "non-deterministic iteration order; use std::collections::BTreeSet (ADR-0001)" },
+  { path = "std::collections::hash_map::HashMap", reason = "non-deterministic iteration order; use BTreeMap (ADR-0001)" },
+  { path = "std::collections::hash_set::HashSet", reason = "non-deterministic iteration order; use BTreeSet (ADR-0001)" },
+]
+
+disallowed-methods = [
+  { path = "std::time::SystemTime::now", reason = "wall-clock time must never enter hashable state; only Event.recorded_at_unix_ms may carry it and it is excluded from every hash (ADR-0001)" },
+  { path = "std::time::Instant::now", reason = "time must never enter hashable state (ADR-0001)" },
+]
