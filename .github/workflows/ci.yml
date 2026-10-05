@@ -11,12 +11,16 @@ env:
 
 jobs:
   check:
-    name: build / clippy / test
-    runs-on: ubuntu-latest
+    name: build / clippy / test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.85.0
         with:
           components: clippy
 
@@ -40,9 +44,10 @@ jobs:
     needs: check
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.85.0
       - uses: Swatinem/rust-cache@v2
       - name: Run golden test twice, compare
+        shell: bash
         run: |
           cargo test --test m0_golden -- --nocapture 2>&1 | grep '^GOLDEN' | sort > run1.txt
           cargo test --test m0_golden -- --nocapture 2>&1 | grep '^GOLDEN' | sort > run2.txt
