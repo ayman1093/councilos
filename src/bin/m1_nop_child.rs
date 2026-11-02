@@ -30,7 +30,7 @@ fn main() {
 ///
 /// A truncated request is not an error here: the host decides every
 /// outcome, and this child still exits cleanly so the host classifies a
-//! clean exit with an incomplete reply as protocol — never a fabricated
+/// clean exit with an incomplete reply as protocol — never a fabricated
 /// crash — per the signed classification order.
 fn consume_request_frame(mut stdin: impl Read) -> io::Result<u64> {
     let mut header = [0u8; 4];
