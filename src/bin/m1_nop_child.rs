@@ -1,24 +1,24 @@
-//! M1 NOP handler child: reads one request frame, replies ok, exits 0.
+//! M1 NOP handler child: reads one request frame, replies `ok`, exits 0.
 //!
-//! This binary belongs to the P1.4 test surface of SubprocessHost. It is
+//! This binary belongs to the P1.4 test surface of `SubprocessHost`. It is
 //! deliberately independent of the kernel library: it speaks the wire
-//! protocol with std alone, never parses the request payload, and keeps
+//! protocol with `std` alone, never parses the request payload, and keeps
 //! no state — one process, one call, one reply (signed D6 model).
 //!
-//! Wire contract (must match src/subprocess_host.rs):
+//! Wire contract (must match `src/subprocess_host.rs`):
 //!
-//! - request frame: u32 big-endian length, then exactly that many bytes;
+//! - request frame: `u32` big-endian length, then exactly that many bytes;
 //! - the whole request frame is consumed before replying, so the parent's
 //!   write cannot fail on a broken pipe on the happy path (EPIPE lesson);
-//! - reply frame: u32 big-endian length, then exactly b"ok".
+//! - reply frame: `u32` big-endian length, then exactly `b"ok"`.
 //!
-//! The reply payload matches NOP_PAYLOAD in src/in_process_host.rs
+//! The reply payload matches `NOP_PAYLOAD` in `src/in_process_host.rs`
 //! byte for byte: the two hosts must agree on it, and the frozen golden in
-//! tests/m1_policy.rs is the anchor that moves first if it ever changes.
+//! `tests/m1_policy.rs` is the anchor that moves first if it ever changes.
 
 use std::io::{self, Read, Write};
 
-/// Reply payload — must match NOP_PAYLOAD in src/in_process_host.rs.
+/// Reply payload — must match `NOP_PAYLOAD` in `src/in_process_host.rs`.
 const REPLY: &[u8] = b"ok";
 
 fn main() {
@@ -30,7 +30,7 @@ fn main() {
 ///
 /// A truncated request is not an error here: the host decides every
 /// outcome, and this child still exits cleanly so the host classifies a
-/// clean exit with an incomplete reply as protocol — never a fabricated
+//! clean exit with an incomplete reply as protocol — never a fabricated
 /// crash — per the signed classification order.
 fn consume_request_frame(mut stdin: impl Read) -> io::Result<u64> {
     let mut header = [0u8; 4];
@@ -41,7 +41,7 @@ fn consume_request_frame(mut stdin: impl Read) -> io::Result<u64> {
 
 /// Write one complete reply frame to stdout.
 ///
-/// Write errors end quietly: the host classifies the outcome from wait,
+/// Write errors end quietly: the host classifies the outcome from `wait`,
 /// never from anything this process reports about itself.
 fn write_reply_frame(payload: &[u8]) {
     let length = match u32::try_from(payload.len()) {
