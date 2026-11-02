@@ -2,7 +2,7 @@
 //!
 //! This binary belongs to the P1.5 test surface of Gate A and is the first
 //! child that links the kernel library itself rather than speaking the wire
-//! protocol with std alone: it reads a session-log path from argv,
+//! protocol with `std` alone: it reads a session-log path from `argv`,
 //! replays it with [replay_session] under the fixed M1 policy set, prints
 //! Replayed::final_state_hash.to_hex() — 68 lowercase hex characters —
 //! and one newline to stdout, then exits 0. On any failure it prints the
