@@ -3,14 +3,14 @@
 //! This binary belongs to the P1.5 test surface of Gate A and is the first
 //! child that links the kernel library itself rather than speaking the wire
 //! protocol with `std` alone: it reads a session-log path from `argv`,
-//! replays it with [replay_session] under the fixed M1 policy set, prints
-//! Replayed::final_state_hash.to_hex() — 68 lowercase hex characters —
+//! replays it with [`replay_session`] under the fixed M1 policy set, prints
+//! `Replayed::final_state_hash.to_hex()` — 68 lowercase hex characters —
 //! and one newline to stdout, then exits 0. On any failure it prints the
-//! error to stderr and exits 1 (surfaced, never swallowed; see M1.md:40).
+//! error to stderr and exits 1 (surfaced, never swallowed; see `M1.md:40`).
 //!
 //! Unlike the P1.4 wire children it never reads stdin: there is no request
 //! frame to consume, so no pipe discipline applies. The parent test drives
-//! it through CARGO_BIN_EXE_m1_replay_child and compares the printed hex
+//! it through `CARGO_BIN_EXE_m1_replay_child` and compares the printed hex
 //! byte for byte against the in-process replay of the same session — the
 //! same preimage, the same digest, and two processes (Gate A's second half).
 //!
@@ -39,8 +39,8 @@ fn main() {
     }
 }
 
-/// The session-log path from argv, or None when the usage is wrong:
-/// argv[0] is the program's own name; the session path is the argument
+/// The session-log path from `argv`, or `None` when the usage is wrong:
+/// `argv[0]` is the program's own name; the session path is the argument
 /// right after it, and anything further is ignored.
 fn session_path() -> Option<String> {
     env::args().nth(1)
