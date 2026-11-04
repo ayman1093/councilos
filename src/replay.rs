@@ -34,8 +34,8 @@
 //!
 //! There is no initial-state parameter. The genesis state is derived from
 //! the header's session name (`event_store.rs:29-31`): the standard M1
-//! template `{session: <header name>, nop_count: 0, last_sequence: 0}` — the
-//! same shape a live runtime starts from. A wrong header name
+//! template `{session: <header name>, nop_count: 0, last_sequence: 0}` — 
+//! the same shape a live runtime starts from. A wrong header name
 //! therefore surfaces as a hash mismatch at the first pair, never as a
 //! silent rename.
 //!
