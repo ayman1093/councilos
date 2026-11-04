@@ -2,6 +2,7 @@
 
 - Status: **Accepted** (consensus of 4 independent model reviews; do not reopen)
 - Milestone: M0 (schema 0), M1 (schema 1)
+- Status update (owner decision D19, in the M1 PR): M1 ships on schema 0 — no schema bump; the migration (CBOR + domain separation + $-key fix) is deferred as one later jump.
 - Enforced by: `src/state.rs`, `clippy.toml`, `tests/m0_golden.rs`
 
 ## Context
