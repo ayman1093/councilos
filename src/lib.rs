@@ -28,10 +28,19 @@
 #![deny(clippy::expect_used)]
 #![warn(clippy::all)]
 
+mod clock;
 pub mod event;
+pub mod event_store;
 pub mod hex;
+pub mod host;
+pub mod in_process_host;
 pub mod instruction;
+pub mod lease;
+pub mod policy;
+pub mod replay;
+pub mod runtime;
 pub mod state;
+pub mod subprocess_host;
 
 /// Canonical serialization schema version used for every hash produced by M0.
 ///
@@ -46,8 +55,16 @@ pub const SCHEMA_VERSION: u8 = 0;
 pub type Hash32 = [u8; 32];
 
 pub use event::{Event, HandlerOutcome};
+pub use event_store::{load as load_session, EventStore, ReplayError, Session, StoreError, StoredPair};
+pub use host::{HandlerHost, HandlerReply, HandlerRequest, HostError};
+pub use in_process_host::InProcessHost;
 pub use instruction::Instruction;
+pub use lease::Lease;
+pub use policy::PolicySet;
+pub use replay::{replay_session, Replayed};
 pub use state::{CanonicalState, CanonicalValue, HashAlg, StateHash, StateRecord};
+pub use runtime::{Runtime, RuntimeError};
+pub use subprocess_host::SubprocessHost;
 
 #[cfg(test)]
 mod tests {
